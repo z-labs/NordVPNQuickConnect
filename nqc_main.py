@@ -4,7 +4,6 @@ import os
 import simplelogging
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import QFileInfo, QSettings
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QDesktopWidget)
 
 from UI_maindlg import Ui_Dialog
