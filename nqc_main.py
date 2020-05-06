@@ -8,7 +8,13 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QDesktopWidget)
 
 from UI_maindlg import Ui_Dialog
 
-revision = 1.0
+revision = '1.0'
+
+about = """
+Revision: 1.00
+License: GPL-3
+"""
+
 
 LOG_CONSOLE_FORMAT = "%(log_color)s%(asctime)s [%(levelname)-8s] %(filename)20s(%(lineno)3s):: %(message)s%(reset)s"
 LOG_FILE_FORMAT = "%(asctime)s [%(levelname)-8s] %(filename)20s(%(lineno)3s):: %(message)s"
@@ -39,6 +45,7 @@ class AppWindow(QMainWindow, Ui_Dialog):
         self.lwOptions.clicked.connect(self.OnListClick)
         self.pbClose.clicked.connect(self.OnCloseClick)
         self.cbViewTerminal.stateChanged.connect(self.OnViewTerminalChange)
+        self.lblRevision.setText(revision)
 
         # Quick functions
         self.pbConnectQuick.clicked.connect(self.OnConnectQuickClick)
@@ -52,6 +59,9 @@ class AppWindow(QMainWindow, Ui_Dialog):
         # Select by server code
         self.pbConnectCode.clicked.connect(self.OnConnectCodeClick)
         self.pbDisconnectCode.clicked.connect(self.OnDisconnectCodeClick)
+
+        # Check status
+        self.pbStatusCheck.clicked.connect((self.OnStatusCheckClick))
 
     def LoadCountries(self):
         self.cbxCountry.clear()
@@ -109,6 +119,21 @@ class AppWindow(QMainWindow, Ui_Dialog):
     def OnDisconnectCodeClick(self):
         self.NordDisconnect()
 
+    def OnStatusCheckClick(self):
+        self.teStatus.clear()
+
+        tempstring = self.NordGetStatus().split('\n')
+        for line in tempstring:
+            if 'Status' in line:
+                self.teStatus.append(line)
+
+        self.teStatus.append('\n')
+
+        tempstring = self.NordGetAccount().split('\n')
+        for line in tempstring:
+            if line.strip() not in ['\\', '/', '-', '', '|', ' ', '  ', '\n']:
+                self.teStatus.append(line)
+
     def NordCommand(self, cmd):
         reply = os.popen(cmd).read()
         log.info(reply)
@@ -123,6 +148,12 @@ class AppWindow(QMainWindow, Ui_Dialog):
 
     def NordConnectByCountry(self, Country, City):
         self.NordCommand('nordvpn connect {} {}'.format(Country, City))
+
+    def NordGetStatus(self):
+        return self.NordCommand('nordvpn status')
+
+    def NordGetAccount(self):
+        return self.NordCommand('nordvpn account')
 
 
 if __name__ == "__main__":
