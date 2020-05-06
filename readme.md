@@ -9,23 +9,23 @@
 ## Introduction
 [NordVPN](https://nordvpn.com) QuickConnect is a desktop utility that gives easy user interface to replace the CLI that comes with [NordVPN](https://nordvpn.com) on linux machines
 
-The program was created using PyQT5 and python3. Requirement listed below:
-colorlog==4.0.2
-pkg-resources==0.0.0
-PyQt5==5.14.2
-PyQt5-sip==12.7.2
-PyQt5-stubs==5.14.2.2
-simplelogging==0.10.0
+The program was created using PyQT5 and python3. Requirements are listed below:
+* colorlog==4.0.2
+* pkg-resources==0.0.0
+* PyQt5==5.14.2
+* PyQt5-sip==12.7.2
+* PyQt5-stubs==5.14.2.2
+* simplelogging==0.10.0
 
-To install requirements execute in terminal 
+To install requirements open a terminal in the folder and execute 
 ```bash
-pip install requirements.txt
+pip3 install requirements.txt
 ```
 
 ## Development/Testing environment
 * The program was tested on a Dell Latitude 6420 laptop running [Ubuntu](https://ubuntubudgie.org/) 18.04
 * [Budgie Desktop](https://ubuntubudgie.org/)
-* [NordVPN](https://nordvpn.com)version is 3.7.1
+* [NordVPN](https://nordvpn.com) version is 3.7.1
 
 ![Screenshot_OS](screenshots/OS About.png)
 
