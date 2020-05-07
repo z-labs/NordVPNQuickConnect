@@ -1,6 +1,8 @@
 import sys
 import os
 
+from nordvpn import NordVPN
+
 import simplelogging
 
 from PyQt5 import QtCore, QtGui
@@ -8,7 +10,7 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QDesktopWidget)
 
 from UI_maindlg import Ui_Dialog
 
-revision = '1.0'
+revision = '1.1'
 
 about = """
 Revision: 1.00
@@ -16,9 +18,17 @@ License: GPL-3
 """
 
 
+DEBUG = False
+
 LOG_CONSOLE_FORMAT = "%(log_color)s%(asctime)s [%(levelname)-8s] %(filename)20s(%(lineno)3s):: %(message)s%(reset)s"
 LOG_FILE_FORMAT = "%(asctime)s [%(levelname)-8s] %(filename)20s(%(lineno)3s):: %(message)s"
-log = simplelogging.get_logger(file_format=LOG_FILE_FORMAT, console_format=LOG_CONSOLE_FORMAT, file_name='log.log')
+
+if DEBUG:
+    log = simplelogging.get_logger(file_format=LOG_FILE_FORMAT, console_format=LOG_CONSOLE_FORMAT, file_name='log.log')
+else:
+    log = simplelogging.get_logger(file_format=LOG_FILE_FORMAT, console_format=LOG_CONSOLE_FORMAT)
+
+nord = NordVPN()
 
 class AppWindow(QMainWindow, Ui_Dialog):
     def center(self):
@@ -36,11 +46,16 @@ class AppWindow(QMainWindow, Ui_Dialog):
         font.setPointSize(10)
         self.setFont(font)
 
+        nord.terminal = self.pteLog
+
         self.swSelection.setCurrentIndex(0)
         self.cbxCode.setVisible(False)
         self.resize(560, 320)
 
         self.LoadCountries()
+
+        if nord.updateAvailable:
+            self.lblUpdate.setText("<font color='red'>NordVPN Update Available</font>")
 
         self.lwOptions.clicked.connect(self.OnListClick)
         self.pbClose.clicked.connect(self.OnCloseClick)
@@ -66,18 +81,14 @@ class AppWindow(QMainWindow, Ui_Dialog):
     def LoadCountries(self):
         self.cbxCountry.clear()
         self.cbxCountry.addItem('Select Country')
-        c = self.NordCommand('nordvpn countries')
-        t = c.split('\n')
-        countries = t[6].split(', ')
+        countries = nord.GetCountries().split(',')
         self.cbxCountry.addItems(countries)
 
     def LoadCities(self):
         self.pbConnectList.setEnabled(True)
         self.cbxCity.clear()
         self.cbxCity.addItem('Select City')
-        c = self.NordCommand('nordvpn cities {}'.format(self.cbxCountry.currentText()))
-        t = c.split('\n')
-        cities = t[6].split(', ')
+        cities = nord.GetCities(self.cbxCountry.currentText()).split(',')
         self.cbxCity.addItems(cities)
 
     def OnViewTerminalChange(self):
@@ -94,66 +105,35 @@ class AppWindow(QMainWindow, Ui_Dialog):
         self.swSelection.setCurrentIndex(i)
 
     def OnConnectQuickClick(self):
-        self.NordConnectQuick()
+        nord.Connect()
 
     def OnDisconnectQuickClick(self):
-        self.NordDisconnect()
+        nord.Disconnect()
 
     def OnConnectListClick(self):
-        c1 = ''
+        country = ''
         if self.cbxCountry.currentIndex() > 0:
-            c1 = self.cbxCountry.currentText()
+            country = self.cbxCountry.currentText()
         if self.cbxCity.currentIndex() == 0:
-            c2 = ''
+            city = ''
         else:
-            c2 = self.cbxCity.currentText()
+            city = self.cbxCity.currentText()
 
-        self.NordConnectByCountry(c1, c2)
+        nord.ConnectByCountry(country, city)
 
     def OnDisconnectListClick(self):
-        self.NordDisconnect()
+        nord.Disconnect()
 
     def OnConnectCodeClick(self):
-        self.NordCommand('nordvpn connect {}'.format(self.leCode.text()))
+        nord.ConnectByServerCode(self.leCode.text())
 
     def OnDisconnectCodeClick(self):
-        self.NordDisconnect()
+        nord.Disconnect()
 
     def OnStatusCheckClick(self):
         self.teStatus.clear()
-
-        tempstring = self.NordGetStatus().split('\n')
-        for line in tempstring:
-            if 'Status' in line:
-                self.teStatus.append(line)
-
-        self.teStatus.append('\n')
-
-        tempstring = self.NordGetAccount().split('\n')
-        for line in tempstring:
-            if line.strip() not in ['\\', '/', '-', '', '|', ' ', '  ', '\n']:
-                self.teStatus.append(line)
-
-    def NordCommand(self, cmd):
-        reply = os.popen(cmd).read()
-        log.info(reply)
-        self.pteLog.appendPlainText(reply)
-        return reply
-
-    def NordConnectQuick(self):
-        self.NordCommand('nordvpn connect')
-
-    def NordDisconnect(self):
-        self.NordCommand('nordvpn disconnect')
-
-    def NordConnectByCountry(self, Country, City):
-        self.NordCommand('nordvpn connect {} {}'.format(Country, City))
-
-    def NordGetStatus(self):
-        return self.NordCommand('nordvpn status')
-
-    def NordGetAccount(self):
-        return self.NordCommand('nordvpn account')
+        self.teStatus.append(nord.GetStatus())
+        self.teStatus.append(nord.GetAccount())
 
 
 if __name__ == "__main__":
