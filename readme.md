@@ -31,6 +31,8 @@ pip3 install requirements.txt
 
 ![Screenshot_OS](screenshots/terminal.png)
 
+![Screenshot_OS](screenshots/Screenshot_About.png)
+
 
 ## Disclaimer
 This application has no official connection to [NordVPN](https://nordvpn.com). 
