@@ -29,7 +29,7 @@ pip3 install requirements.txt
 * [Budgie Desktop](https://ubuntubudgie.org/)
 * [NordVPN](https://nordvpn.com) version is 3.7.1
 
-![Screenshot_OS](screenshots/OS About.png)
+![Screenshot_OS](screenshots/OS_About.png)
 
 ![Screenshot_OS](screenshots/terminal.png)
 
