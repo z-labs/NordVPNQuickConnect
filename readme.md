@@ -6,6 +6,8 @@
 
 ![Screenshot_Server](screenshots/Screenshot_Server.png)
 
+![Screenshot_OS](screenshots/Screenshot_About.png)
+
 ## Introduction
 [NordVPN](https://nordvpn.com) QuickConnect is a desktop utility that gives easy user interface to replace the CLI that comes with [NordVPN](https://nordvpn.com) on linux machines
 
@@ -30,9 +32,6 @@ pip3 install requirements.txt
 ![Screenshot_OS](screenshots/OS About.png)
 
 ![Screenshot_OS](screenshots/terminal.png)
-
-![Screenshot_OS](screenshots/Screenshot_About.png)
-
 
 ## Disclaimer
 This application has no official connection to [NordVPN](https://nordvpn.com). 
